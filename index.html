@@ -33,20 +33,27 @@
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      font-size: 14px;
     }
 
     th, td {
-      padding: 10px 8px;
+      padding: 8px 6px;
       border-bottom: 1px solid #e5e7eb;
       text-align: left;
-      font-size: 14px;
-      word-wrap: break-word;
+      word-break: break-word;
     }
 
     th {
       background: #b91c1c;
       color: white;
       text-align: center;
+      font-weight: 600;
+    }
+
+    td a {
+      text-decoration: none;
+      color: #2563eb;
+      font-size: 16px;
     }
 
     .btn {
@@ -98,30 +105,30 @@
       margin-top: 6px;
     }
 
+    /* 🔧 Ajuste responsivo: mantener tabla en pantallas pequeñas */
     @media (max-width: 700px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
+      table {
+        font-size: 12px;
       }
-      tr {
-        margin-bottom: 10px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-        padding: 8px;
-      }
-      td {
-        border: none;
-        display: flex;
-        justify-content: space-between;
+      th, td {
         padding: 6px 4px;
       }
-      td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: #b91c1c;
+      h1 {
+        font-size: 1.2rem;
       }
-      th { display: none; }
+      .btn {
+        font-size: 13px;
+        padding: 8px 10px;
+      }
     }
+
+    /* Evita que en portrait cambie a vista tipo bloque */
+    @media screen and (orientation: portrait) {
+      table, thead, tbody, th, td, tr {
+        display: table;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -217,10 +224,10 @@
       tableBody.innerHTML = items.length
         ? items.map(r => `
           <tr>
-            <td data-label="Nombre">${r.nombre}</td>
-            <td data-label="Regalo 1">${renderGift(r.regalo1, [r.link1a, r.link1b])}</td>
-            <td data-label="Regalo 2">${renderGift(r.regalo2, [r.link2a, r.link2b])}</td>
-            <td data-label="Regalo 3">${renderGift(r.regalo3, [r.link3a, r.link3b])}</td>
+            <td>${r.nombre}</td>
+            <td>${renderGift(r.regalo1, [r.link1a, r.link1b])}</td>
+            <td>${renderGift(r.regalo2, [r.link2a, r.link2b])}</td>
+            <td>${renderGift(r.regalo3, [r.link3a, r.link3b])}</td>
           </tr>`).join("")
         : `<tr><td colspan="4" style="text-align:center;">Sin registros</td></tr>`;
     }
