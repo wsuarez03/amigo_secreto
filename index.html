@@ -3,126 +3,124 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amigo Secreto - Regalos</title>
+  <title>🎁 Amigo Secreto - Lista de Regalos</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    body { 
-      font-family: Inter, Arial, sans-serif; 
-      background: #f3f4f6; 
-      padding: 16px; 
-      color: #111827; 
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: #f9fafb;
+      padding: 16px;
+      color: #111827;
       margin: 0;
     }
 
-    h1 { 
-      text-align: center; 
-      color: #b91c1c; 
-      margin-bottom: 8px; 
-      font-size: 1.4rem;
+    h1 {
+      text-align: center;
+      color: #b91c1c;
+      margin-bottom: 12px;
+      font-size: 1.5rem;
     }
 
-    .container { 
-      max-width: 960px; 
-      margin: 0 auto; 
+    .container {
+      max-width: 900px;
+      margin: auto;
     }
 
-    /* Contenedor para scroll horizontal en móviles */
-    .table-wrapper {
-      overflow-x: auto;
-      background: white;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      min-width: 600px;
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 14px;
+      word-wrap: break-word;
     }
 
-    th, td { 
-      padding: 10px 12px; 
-      border-bottom: 1px solid #e5e7eb; 
-      text-align: left; 
-      font-size: 14px; 
-      word-break: break-word;
+    th {
+      background: #b91c1c;
+      color: white;
+      text-align: center;
     }
 
-    th { 
-      background: #b91c1c; 
-      color: white; 
-      font-weight: 600; 
-      text-align: center; 
+    .btn {
+      background: #b91c1c;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
     }
 
-    a {
-      color: #2563eb;
-      text-decoration: none;
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0;
     }
 
-    a:hover {
-      text-decoration: underline;
+    form.card {
+      display: none;
+      background: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin: 0 auto;
+      max-width: 500px;
     }
 
-    .btn { 
-      background: #b91c1c; 
-      color: white; 
-      border: none; 
-      padding: 10px 16px; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      font-weight: 600; 
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
       font-size: 14px;
     }
 
-    .btn.secondary { 
-      background: #374151; 
+    label {
+      font-weight: 600;
+      margin-top: 8px;
+      display: block;
     }
 
-    .btn-row { 
-      display: flex; 
-      flex-wrap: wrap;
-      gap: 12px; 
-      justify-content: center; 
-      margin-top: 18px; 
+    .link-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
     }
 
-    form.card { 
-      display: none; 
-      background: #fff; 
-      padding: 16px; 
-      border-radius: 10px; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
-      max-width: 500px; 
-      margin: 20px auto; 
-    }
-
-    input[type="text"], select { 
-      width: 100%; 
-      padding: 10px; 
-      margin-top: 8px; 
-      border-radius: 8px; 
-      border: 1px solid #d1d5db; 
-      font-size: 14px; 
-    }
-
-    .link-fields { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 6px; 
-      margin-top: 6px; 
-    }
-
-    .center { text-align: center; }
-
-    /* 📱 Ajustes para pantallas pequeñas */
-    @media (max-width: 640px) {
-      body { padding: 10px; }
-      h1 { font-size: 1.2rem; }
-      table { font-size: 13px; }
-      th, td { padding: 8px; }
-      .btn { flex: 1; padding: 8px 10px; font-size: 13px; }
-      form.card { margin: 12px; padding: 12px; }
+    @media (max-width: 700px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      tr {
+        margin-bottom: 10px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+        padding: 8px;
+      }
+      td {
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 4px;
+      }
+      td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #b91c1c;
+      }
+      th { display: none; }
     }
   </style>
 </head>
@@ -130,29 +128,24 @@
   <div class="container">
     <h1>🎁 Amigo Secreto — Lista de Regalos</h1>
 
-    <!-- 🔹 Scroll horizontal en móviles -->
-    <div class="table-wrapper">
-      <table id="giftTable">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Regalo 1</th>
-            <th>Regalo 2</th>
-            <th>Regalo 3</th>
-            <th class="center actions-header" style="width:160px">Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <table id="giftTable">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Regalo 1</th>
+          <th>Regalo 2</th>
+          <th>Regalo 3</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
     <div class="btn-row">
       <button id="registerBtn" class="btn">➕ Registrar regalos</button>
-      <button id="adminBtn" class="btn secondary">🔑 Modo administrador</button>
     </div>
 
     <form id="giftForm" class="card" autocomplete="off">
-      <h3>Registrar tus regalos</h3>
+      <h3 style="text-align:center;">Registrar tus regalos</h3>
       <input id="name" type="text" placeholder="Tu nombre (ej. Juan Pérez)" required />
 
       <!-- REGALO 1 -->
@@ -196,7 +189,7 @@
 
       <div style="margin-top:12px; display:flex; gap:10px;">
         <button type="submit" class="btn" style="flex:1">Guardar</button>
-        <button type="button" id="cancelBtn" class="btn secondary" style="flex:1">Cancelar</button>
+        <button type="button" id="cancelBtn" class="btn" style="flex:1;background:#6b7280;">Cancelar</button>
       </div>
     </form>
   </div>
@@ -204,20 +197,19 @@
   <script>
     const SUPABASE_URL = "https://evxwafsndfvsgkwkkxpo.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHdhZnNuZGZ2c2drd2treHBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNDk2MzIsImV4cCI6MjA3NjcyNTYzMn0.NsHB8QJkrpbMOXJ2-tQgJ7wGDCgTsQst8RDRw8gGmE0";
-    const ADMIN_PASSWORD = "admin123";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const tableBody = document.querySelector("#giftTable tbody");
     const registerBtn = document.getElementById("registerBtn");
-    const adminBtn = document.getElementById("adminBtn");
     const giftForm = document.getElementById("giftForm");
     const cancelBtn = document.getElementById("cancelBtn");
-    let adminMode = false;
 
     function renderGift(name, links = []) {
       if (!name) return "";
       const validLinks = links.filter(l => l && l.trim() !== "");
       if (validLinks.length === 0) return name;
-      const linksHTML = validLinks.map(l => `<a href="${l}" target="_blank" title="Ver regalo">📎</a>`).join(" ");
+      const linksHTML = validLinks
+        .map(l => `<a href="${l}" target="_blank" title="Ver regalo">📎</a>`)
+        .join(" ");
       return `${name} ${linksHTML}`;
     }
 
@@ -225,17 +217,12 @@
       tableBody.innerHTML = items.length
         ? items.map(r => `
           <tr>
-            <td>${r.nombre}</td>
-            <td>${renderGift(r.regalo1, [r.link1a, r.link1b])}</td>
-            <td>${renderGift(r.regalo2, [r.link2a, r.link2b])}</td>
-            <td>${renderGift(r.regalo3, [r.link3a, r.link3b])}</td>
-            <td class="center">
-              ${adminMode ? `
-                <button class="edit" data-id="${r.id}">✏️</button>
-                <button class="del" data-id="${r.id}">🗑️</button>` : ""}
-            </td>
+            <td data-label="Nombre">${r.nombre}</td>
+            <td data-label="Regalo 1">${renderGift(r.regalo1, [r.link1a, r.link1b])}</td>
+            <td data-label="Regalo 2">${renderGift(r.regalo2, [r.link2a, r.link2b])}</td>
+            <td data-label="Regalo 3">${renderGift(r.regalo3, [r.link3a, r.link3b])}</td>
           </tr>`).join("")
-        : `<tr><td colspan="5" style="text-align:center;">Sin registros</td></tr>`;
+        : `<tr><td colspan="4" style="text-align:center;">Sin registros</td></tr>`;
     }
 
     async function loadGifts() {
@@ -266,7 +253,10 @@
       const link3a = document.getElementById("gift3_link1").value.trim();
       const link3b = document.getElementById("gift3_link2").value.trim();
 
-      const { error } = await supabase.from("regalos").insert([{ nombre, regalo1, link1a, link1b, regalo2, link2a, link2b, regalo3, link3a, link3b }]);
+      const { error } = await supabase.from("regalos").insert([
+        { nombre, regalo1, link1a, link1b, regalo2, link2a, link2b, regalo3, link3a, link3b }
+      ]);
+
       if (error) return alert("❌ Error al guardar");
       alert("🎉 Registro exitoso");
       giftForm.reset();
@@ -276,7 +266,6 @@
 
     registerBtn.onclick = () => giftForm.style.display = giftForm.style.display === "block" ? "none" : "block";
     cancelBtn.onclick = () => { giftForm.reset(); giftForm.style.display = "none"; };
-    adminBtn.onclick = () => { if (prompt("Clave admin:") === ADMIN_PASSWORD) { adminMode = true; loadGifts(); } };
 
     loadGifts();
   </script>
