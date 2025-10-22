@@ -106,28 +106,41 @@
     }
 
     /* 🔧 Ajuste responsivo: mantener tabla en pantallas pequeñas */
-    @media (max-width: 700px) {
-      table {
-        font-size: 12px;
-      }
-      th, td {
-        padding: 6px 4px;
-      }
-      h1 {
-        font-size: 1.2rem;
-      }
-      .btn {
-        font-size: 13px;
-        padding: 8px 10px;
-      }
-    }
+@media (max-width: 700px) {
+  .container {
+    overflow-x: auto;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    min-width: 600px; /* mantiene las columnas alineadas */
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th, td {
+    padding: 8px 6px;
+    text-align: left;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+}
 
     /* Evita que en portrait cambie a vista tipo bloque */
-    @media screen and (orientation: portrait) {
-      table, thead, tbody, th, td, tr {
-        display: table;
-      }
-    }
+@media screen and (orientation: portrait) {
+  table {
+    min-width: 600px;
+    display: table;
+  }
+}
 
   </style>
 </head>
@@ -278,3 +291,4 @@
   </script>
 </body>
 </html>
+
