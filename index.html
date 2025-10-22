@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amigo Secreto 🎁</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { text-align: center; color: #b91c1c; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #b91c1c;
+      color: white;
+    }
+    .actions button {
+      margin: 0 3px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .edit-btn { background: #2563eb; color: white; }
+    .delete-btn { background: #dc2626; color: white; }
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+      gap: 10px;
+    }
+    .btn {
+      background: #b91c1c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn:hover { background: #dc2626; }
+    form {
+      display: none;
+      max-width: 450px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎁 Amigo Secreto - Lista de Regalos</h1>
+
+  <table id="giftTable">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Regalo 1</th>
+        <th>Regalo 2</th>
+        <th>Regalo 3</th>
+        <th class="actions-header">Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="btn-container">
+    <button class="btn" id="registerBtn">➕ Registrar regalos</button>
+    <button class="btn" id="adminBtn">🔑 Modo administrador</button>
+  </div>
+
+  <form id="giftForm">
+    <h2>Registrar tus regalos</h2>
+    <label>Nombre:</label>
+    <input type="text" id="name" required>
+
+    <label>Opción de regalo 1:</label>
+    <input type="text" id="gift1" required>
+
+    <label>Opción de regalo 2:</label>
+    <input type="text" id="gift2" required>
+
+    <label>Opción de regalo 3:</label>
+    <input type="text" id="gift3" required>
+
+    <button type="submit" class="btn" style="width:100%;margin-top:15px;">Guardar</button>
+  </form>
+
+  <script>
+    const tableBody = document.querySelector("#giftTable tbody");
+    const form = document.getElementById("giftForm");
+    const registerBtn = document.getElementById("registerBtn");
+    const adminBtn = document.getElementById("adminBtn");
+
+    let gifts = JSON.parse(localStorage.getItem("gifts")) || [];
+    let adminMode = false;
+
+    // Mostrar datos en tabla
+    function renderTable() {
+      tableBody.innerHTML = "";
+      gifts.forEach((g, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${g.name}</td>
+          <td>${g.gift1}</td>
+          <td>${g.gift2}</td>
+          <td>${g.gift3}</td>
+          <td class="actions">
+            ${adminMode ? `
+              <button class="edit-btn" onclick="editGift(${index})">✏️</button>
+              <button class="delete-btn" onclick="deleteGift(${index})">🗑️</button>
+            ` : ""}
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      document.querySelector(".actions-header").style.display = adminMode ? "table-cell" : "none";
+      document.querySelectorAll(".actions").forEach(td => td.style.display = adminMode ? "table-cell" : "none");
+    }
+
+    // Mostrar formulario
+    registerBtn.addEventListener("click", () => {
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    });
+
+    // Activar modo admin
+    adminBtn.addEventListener("click", () => {
+      const pass = prompt("Ingrese la clave de administrador:");
+      if (pass === "admin123") {
+        adminMode = true;
+        alert("Modo administrador activado ✅");
+        renderTable();
+      } else if (pass) {
+        alert("❌ Clave incorrecta");
+      }
+    });
+
+    // Guardar nuevos regalos
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const gift1 = document.getElementById("gift1").value.trim();
+      const gift2 = document.getElementById("gift2").value.trim();
+      const gift3 = document.getElementById("gift3").value.trim();
+
+      if (gifts.some(g => g.name.toLowerCase() === name.toLowerCase())) {
+        alert("Ya registraste tus regalos. No puedes modificar.");
+        return;
+      }
+
+      gifts.push({ name, gift1, gift2, gift3 });
+      localStorage.setItem("gifts", JSON.stringify(gifts));
+      alert("🎉 Tus opciones se guardaron exitosamente.");
+      form.reset();
+      form.style.display = "none";
+      renderTable();
+    });
+
+    // Funciones admin (globales)
+    window.editGift = function(index) {
+      const g = gifts[index];
+      const new1 = prompt("Nuevo regalo 1:", g.gift1);
+      const new2 = prompt("Nuevo regalo 2:", g.gift2);
+      const new3 = prompt("Nuevo regalo 3:", g.gift3);
+      gifts[index] = { ...g, gift1: new1, gift2: new2, gift3: new3 };
+      localStorage.setItem("gifts", JSON.stringify(gifts));
+      renderTable();
+    }
+
+    window.deleteGift = function(index) {
+      if (confirm("¿Seguro que deseas eliminar este registro?")) {
+        gifts.splice(index, 1);
+        localStorage.setItem("gifts", JSON.stringify(gifts));
+        renderTable();
+      }
+    }
+
+    // Render inicial
+    renderTable();
+  </script>
+</body>
+</html>
