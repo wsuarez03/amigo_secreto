@@ -4,10 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Amigo Secreto - Regalos</title>
-
-  <!-- Supabase JS v2 -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
   <style>
     body {
       font-family: Inter, Arial, sans-serif;
@@ -69,38 +66,33 @@
     .edit { background:#2563eb; color:white; }
     .del { background:#dc2626; color:white; }
     .note { text-align:center; margin-top:10px; color:#6b7280; font-size:13px; }
-    @media (max-width:700px) {
-      th, td { font-size:13px; padding:8px; }
-      .btn { padding:8px 12px; }
-    }
+    a.link-icon { text-decoration:none; margin-left:6px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎁 Amigo Secreto — Lista de Regalos</h1>
 
-    <table id="giftTable" aria-live="polite">
+    <table id="giftTable">
       <thead>
         <tr>
-          <th style="width:25%">Nombre</th>
-          <th style="width:25%">Regalo 1</th>
-          <th style="width:25%">Regalo 2</th>
-          <th style="width:25%">Regalo 3</th>
+          <th>Nombre</th>
+          <th>Regalo 1</th>
+          <th>Regalo 2</th>
+          <th>Regalo 3</th>
           <th class="center actions-header" style="width:160px">Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- filas generadas por JS -->
-      </tbody>
+      <tbody></tbody>
     </table>
 
-    <div class="btn-row" style="margin-top:14px;">
+    <div class="btn-row">
       <button id="registerBtn" class="btn">➕ Registrar regalos</button>
       <button id="adminBtn" class="btn secondary">🔑 Modo administrador</button>
     </div>
 
     <form id="giftForm" class="card" autocomplete="off">
-      <h3 style="margin:0 0 8px 0">Registrar tus regalos</h3>
+      <h3>Registrar tus regalos</h3>
       <input id="name" type="text" placeholder="Tu nombre (ej. Juan Pérez)" required />
       <input id="gift1" type="text" placeholder="Regalo 1" required />
       <input id="gift2" type="text" placeholder="Regalo 2" required />
@@ -112,72 +104,24 @@
     </form>
 
     <div class="note">
-      <div>Una vez que registres tus 3 opciones, no podrás modificarlas. Solo el administrador puede editar o eliminar registros.</div>
+      Una vez que registres tus 3 opciones, no podrás modificarlas. Solo el administrador puede editar o eliminar registros.
     </div>
   </div>
 
   <script>
-    /********** CONFIG (ya con tus valores) **********/
     const SUPABASE_URL = "https://evxwafsndfvsgkwkkxpo.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHdhZnNuZGZ2c2drd2treHBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNDk2MzIsImV4cCI6MjA3NjcyNTYzMn0.NsHB8QJkrpbMOXJ2-tQgJ7wGDCgTsQst8RDRw8gGmE0";
     const ADMIN_PASSWORD = "admin123";
-    /***********************************************/
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const tableBody = document.querySelector("#giftTable tbody");
     const registerBtn = document.getElementById("registerBtn");
     const adminBtn = document.getElementById("adminBtn");
     const giftForm = document.getElementById("giftForm");
     const cancelBtn = document.getElementById("cancelBtn");
-
     let adminMode = false;
-    let currentData = []; // cache local
+    let currentData = [];
 
-    // --- RENDER tabla ---
-    function renderTable(items = []) {
-      currentData = items;
-      tableBody.innerHTML = "";
-
-      if (items.length === 0) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="5" style="text-align:center; padding:20px; color:#6b7280">Aún no hay registros. ¡Sé el primero en registrar tus regalos!</td>`;
-        tableBody.appendChild(tr);
-        return;
-      }
-
-      items.forEach((r) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(r.nombre)}</td>
-          <td>${escapeHtml(r.regalo1)}</td>
-          <td>${escapeHtml(r.regalo2)}</td>
-          <td>${escapeHtml(r.regalo3)}</td>
-          <td class="center">
-            ${adminMode ? `
-              <div class="row-actions">
-                <button class="edit" data-id="${r.id}">✏️ Editar</button>
-                <button class="del" data-id="${r.id}">🗑️ Eliminar</button>
-              </div>` : ''}
-          </td>
-        `;
-        tableBody.appendChild(tr);
-      });
-
-      // attach handlers for edit/delete (only visible in adminMode)
-      if (adminMode) {
-        document.querySelectorAll(".edit").forEach(b => b.addEventListener("click", async (e) => {
-          const id = e.currentTarget.getAttribute("data-id");
-          await adminEdit(parseInt(id, 10));
-        }));
-        document.querySelectorAll(".del").forEach(b => b.addEventListener("click", async (e) => {
-          const id = e.currentTarget.getAttribute("data-id");
-          await adminDelete(parseInt(id, 10));
-        }));
-      }
-    }
-
-    // --- ESCAPE helpers (seguridad mínima para mostrar texto) ---
     function escapeHtml(str = "") {
       return String(str)
         .replaceAll("&", "&amp;")
@@ -187,152 +131,114 @@
         .replaceAll("'", "&#039;");
     }
 
-    // --- CARGAR datos iniciales ---
-    async function loadGifts() {
-      try {
-        const { data, error } = await supabase
-          .from("regalos")
-          .select("*")
-          .order("id", { ascending: true });
+    function renderGift(name, link) {
+      if (!name) return "";
+      return escapeHtml(name) + (link ? `<a href="${escapeHtml(link)}" target="_blank" class="link-icon" title="Ver enlace">📎</a>` : "");
+    }
 
-        if (error) {
-          console.error("Error cargando regalos:", error);
-          return;
-        }
-        renderTable(data || []);
-      } catch (err) {
-        console.error(err);
+    function renderTable(items = []) {
+      currentData = items;
+      tableBody.innerHTML = "";
+      if (items.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:20px;">Aún no hay registros.</td></tr>`;
+        return;
+      }
+      items.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(r.nombre)}</td>
+          <td>${renderGift(r.regalo1, r.link1)}</td>
+          <td>${renderGift(r.regalo2, r.link2)}</td>
+          <td>${renderGift(r.regalo3, r.link3)}</td>
+          <td class="center">
+            ${adminMode ? `
+              <div class="row-actions">
+                <button class="edit" data-id="${r.id}">✏️</button>
+                <button class="del" data-id="${r.id}">🗑️</button>
+              </div>` : ""}
+          </td>`;
+        tableBody.appendChild(tr);
+      });
+
+      if (adminMode) {
+        document.querySelectorAll(".edit").forEach(b => b.onclick = e => adminEdit(parseInt(e.target.dataset.id)));
+        document.querySelectorAll(".del").forEach(b => b.onclick = e => adminDelete(parseInt(e.target.dataset.id)));
       }
     }
 
-    // --- Suscripción en tiempo real (Postgres changes) ---
-    function subscribeRealtime() {
-      // canal público para la tabla 'regalos'
-      const channel = supabase.channel('public:regalos')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'regalos' }, payload => {
-          // en cualquier cambio recargamos (simple y robusto)
-          loadGifts();
-        })
-        .subscribe();
-      // Nota: No necesitamos guardar el objeto channel aquí, pero podríamos unsubscribirlo si fuera necesario.
+    async function loadGifts() {
+      const { data, error } = await supabase.from("regalos").select("*").order("id", { ascending: true });
+      if (!error) renderTable(data || []);
     }
 
-    // --- EVENTOS UI ---
-    registerBtn.addEventListener("click", () => {
-      // toggle form
-      giftForm.style.display = giftForm.style.display === "none" || giftForm.style.display === "" ? "block" : "none";
-    });
+    registerBtn.onclick = () => {
+      giftForm.style.display = giftForm.style.display === "block" ? "none" : "block";
+    };
 
-    adminBtn.addEventListener("click", () => {
+    adminBtn.onclick = () => {
       const pass = prompt("Ingrese la clave de administrador:");
       if (pass === ADMIN_PASSWORD) {
         adminMode = true;
-        alert("Modo administrador activado ✅\nAhora puedes editar o eliminar registros.");
+        alert("Modo administrador activado ✅");
         document.querySelector(".actions-header").style.display = "table-cell";
         loadGifts();
-      } else if (pass) {
-        alert("Clave incorrecta ❌");
-      }
-    });
+      } else alert("Clave incorrecta ❌");
+    };
 
-    cancelBtn.addEventListener("click", () => {
+    cancelBtn.onclick = () => {
       giftForm.reset();
       giftForm.style.display = "none";
-    });
+    };
 
-    // --- INSERT registro (solo si no existe nombre) ---
-    giftForm.addEventListener("submit", async (e) => {
+    giftForm.onsubmit = async e => {
       e.preventDefault();
-
       const nombre = document.getElementById("name").value.trim();
       const regalo1 = document.getElementById("gift1").value.trim();
       const regalo2 = document.getElementById("gift2").value.trim();
       const regalo3 = document.getElementById("gift3").value.trim();
 
-      if (!nombre || !regalo1 || !regalo2 || !regalo3) {
-        alert("Completa todos los campos.");
-        return;
-      }
+      if (!nombre || !regalo1 || !regalo2 || !regalo3) return alert("Completa todos los campos.");
 
-      try {
-        // Comprobación local: recuperar lista actual y verificar existencia por nombre (case-insensitive)
-        const { data: all, error: selErr } = await supabase.from("regalos").select("nombre");
-        if (selErr) { console.error(selErr); }
+      const { data: all } = await supabase.from("regalos").select("nombre");
+      const exists = (all || []).some(r => r.nombre.toLowerCase() === nombre.toLowerCase());
+      if (exists) return alert("Ya registraste tus regalos.");
 
-        const exists = (all || []).some(r => (r.nombre || "").toLowerCase() === nombre.toLowerCase());
-        if (exists) {
-          alert("Ya registraste tus regalos. No puedes modificar.");
-          return;
-        }
+      const link1 = confirm("¿Regalo 1 tiene link?") ? prompt("Pega el link del Regalo 1:") : "";
+      const link2 = confirm("¿Regalo 2 tiene link?") ? prompt("Pega el link del Regalo 2:") : "";
+      const link3 = confirm("¿Regalo 3 tiene link?") ? prompt("Pega el link del Regalo 3:") : "";
 
-        // Insert
-        const { error } = await supabase.from("regalos").insert([{ nombre, regalo1, regalo2, regalo3 }]);
-        if (error) {
-          console.error("Error insertando:", error);
-          alert("Error al guardar los datos. Intenta de nuevo.");
-          return;
-        }
+      const { error } = await supabase.from("regalos").insert([{ nombre, regalo1, link1, regalo2, link2, regalo3, link3 }]);
+      if (error) return alert("Error al guardar.");
+      alert("🎉 Registro exitoso");
+      giftForm.reset();
+      giftForm.style.display = "none";
+      loadGifts();
+    };
 
-        alert("🎉 Tus opciones se guardaron exitosamente.");
-        giftForm.reset();
-        giftForm.style.display = "none";
-        loadGifts();
-      } catch (err) {
-        console.error(err);
-        alert("Error al conectar con la base. Revisa la consola.");
-      }
-    });
-
-    // --- ADMIN: editar registro ---
     async function adminEdit(id) {
-      if (!adminMode) { alert("Solo administrador"); return; }
-      // obtener registro actual
       const row = currentData.find(r => r.id === id);
-      if (!row) { alert("Registro no encontrado."); return; }
-
-      const new1 = prompt("Regalo 1:", row.regalo1);
-      const new2 = prompt("Regalo 2:", row.regalo2);
-      const new3 = prompt("Regalo 3:", row.regalo3);
-
-      if (new1 === null || new2 === null || new3 === null) {
-        // usuario canceló
-        return;
-      }
-
-      const { error } = await supabase.from("regalos").update({
-        regalo1: new1.trim(), regalo2: new2.trim(), regalo3: new3.trim()
-      }).eq("id", id);
-
-      if (error) {
-        console.error("Error actualizando:", error);
-        alert("No se pudo actualizar. Revisa la consola.");
-        return;
-      }
-      alert("Registro actualizado ✅");
+      if (!row) return;
+      const regalo1 = prompt("Regalo 1:", row.regalo1);
+      const link1 = prompt("Link 1:", row.link1 || "");
+      const regalo2 = prompt("Regalo 2:", row.regalo2);
+      const link2 = prompt("Link 2:", row.link2 || "");
+      const regalo3 = prompt("Regalo 3:", row.regalo3);
+      const link3 = prompt("Link 3:", row.link3 || "");
+      await supabase.from("regalos").update({ regalo1, link1, regalo2, link2, regalo3, link3 }).eq("id", id);
       loadGifts();
     }
 
-    // --- ADMIN: eliminar registro ---
     async function adminDelete(id) {
-      if (!adminMode) { alert("Solo administrador"); return; }
-      if (!confirm("¿Eliminar este registro?")) return;
-
-      const { error } = await supabase.from("regalos").delete().eq("id", id);
-      if (error) {
-        console.error("Error borrando:", error);
-        alert("No se pudo eliminar. Revisa la consola.");
-        return;
+      if (confirm("¿Eliminar este registro?")) {
+        await supabase.from("regalos").delete().eq("id", id);
+        loadGifts();
       }
-      alert("Registro eliminado ✅");
-      loadGifts();
     }
 
-    // --- Inicialización ---
-    (async function init() {
-      // Ocultar la columna de acciones al inicio (solo visible en adminMode)
+    (async () => {
       document.querySelector(".actions-header").style.display = "none";
       await loadGifts();
-      subscribeRealtime();
+      supabase.channel("public:regalos").on("postgres_changes", { event: "*", schema: "public", table: "regalos" }, loadGifts).subscribe();
     })();
   </script>
 </body>
