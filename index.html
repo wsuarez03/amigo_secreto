@@ -106,12 +106,20 @@
     let adminMode = false;
     let currentData = [];
 
-    function renderGift(name, links = []) {
-      if (!name) return "";
-      const clips = links.filter(l => l).length;
-      const emojis = clips === 0 ? "" : " 📎".repeat(clips);
-      return name + emojis;
-    }
+   function renderGift(name, links = []) {
+  if (!name) return "";
+  const validLinks = links.filter(l => l && l.trim() !== "");
+  
+  if (validLinks.length === 0) return name;
+
+  // Crea cada emoji 📎 como un link clicable
+  const linksHTML = validLinks
+    .map(l => `<a href="${l}" target="_blank" title="Ver regalo">📎</a>`)
+    .join(" ");
+
+  return `${name} ${linksHTML}`;
+}
+
 
     function renderTable(items = []) {
       tableBody.innerHTML = items.length
@@ -176,3 +184,4 @@
   </script>
 </body>
 </html>
+
