@@ -6,67 +6,19 @@
   <title>Amigo Secreto - Regalos</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      font-family: Inter, Arial, sans-serif;
-      background: #f3f4f6;
-      margin: 0;
-      padding: 24px;
-      color: #111827;
-    }
+    body { font-family: Inter, Arial, sans-serif; background: #f3f4f6; padding: 24px; color: #111827; }
     h1 { text-align:center; color:#b91c1c; margin-bottom: 8px; }
     .container { max-width: 960px; margin: 0 auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
-    }
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-      font-size: 14px;
-    }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
     th { background:#b91c1c; color: white; font-weight:600; text-align:center; }
-    td.center { text-align:center; }
-    .btn-row { display:flex; gap:12px; justify-content:center; margin-top:18px; }
-    .btn {
-      background:#b91c1c;
-      color:white;
-      border:none;
-      padding:10px 16px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
+    .btn { background:#b91c1c; color:white; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
     .btn.secondary { background:#374151; }
-    form.card {
-      display:none;
-      margin-top:20px;
-      background:#fff;
-      padding:16px;
-      border-radius:10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      max-width:480px;
-      margin-left:auto;
-      margin-right:auto;
-    }
-    input[type="text"] {
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      border-radius:8px;
-      border:1px solid #d1d5db;
-      font-size:14px;
-    }
-    .row-actions button { margin-right:8px; padding:6px 10px; border-radius:6px; border:none; cursor:pointer; }
-    .edit { background:#2563eb; color:white; }
-    .del { background:#dc2626; color:white; }
-    .note { text-align:center; margin-top:10px; color:#6b7280; font-size:13px; }
-    a.link-icon { text-decoration:none; margin-left:6px; }
+    .btn-row { display:flex; gap:12px; justify-content:center; margin-top:18px; }
+    form.card { display:none; background:#fff; padding:16px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.06); max-width:500px; margin:20px auto; }
+    input[type="text"], select { width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #d1d5db; font-size:14px; }
+    .link-fields { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+    .center { text-align:center; }
   </style>
 </head>
 <body>
@@ -94,25 +46,57 @@
     <form id="giftForm" class="card" autocomplete="off">
       <h3>Registrar tus regalos</h3>
       <input id="name" type="text" placeholder="Tu nombre (ej. Juan Pérez)" required />
-      <input id="gift1" type="text" placeholder="Regalo 1" required />
-      <input id="gift2" type="text" placeholder="Regalo 2" required />
-      <input id="gift3" type="text" placeholder="Regalo 3" required />
+
+      <!-- REGALO 1 -->
+      <label>🎁 Regalo 1</label>
+      <input id="gift1" type="text" placeholder="Descripción regalo 1" required />
+      <select id="gift1_links">
+        <option value="0">Sin link</option>
+        <option value="1">1 link</option>
+        <option value="2">2 links</option>
+      </select>
+      <div class="link-fields" id="gift1_links_fields" style="display:none;">
+        <input id="gift1_link1" type="text" placeholder="Link 1 del regalo 1" />
+        <input id="gift1_link2" type="text" placeholder="Link 2 del regalo 1" />
+      </div>
+
+      <!-- REGALO 2 -->
+      <label>🎁 Regalo 2</label>
+      <input id="gift2" type="text" placeholder="Descripción regalo 2" required />
+      <select id="gift2_links">
+        <option value="0">Sin link</option>
+        <option value="1">1 link</option>
+        <option value="2">2 links</option>
+      </select>
+      <div class="link-fields" id="gift2_links_fields" style="display:none;">
+        <input id="gift2_link1" type="text" placeholder="Link 1 del regalo 2" />
+        <input id="gift2_link2" type="text" placeholder="Link 2 del regalo 2" />
+      </div>
+
+      <!-- REGALO 3 -->
+      <label>🎁 Regalo 3</label>
+      <input id="gift3" type="text" placeholder="Descripción regalo 3" required />
+      <select id="gift3_links">
+        <option value="0">Sin link</option>
+        <option value="1">1 link</option>
+        <option value="2">2 links</option>
+      </select>
+      <div class="link-fields" id="gift3_links_fields" style="display:none;">
+        <input id="gift3_link1" type="text" placeholder="Link 1 del regalo 3" />
+        <input id="gift3_link2" type="text" placeholder="Link 2 del regalo 3" />
+      </div>
+
       <div style="margin-top:12px; display:flex; gap:10px;">
         <button type="submit" class="btn" style="flex:1">Guardar</button>
         <button type="button" id="cancelBtn" class="btn secondary" style="flex:1">Cancelar</button>
       </div>
     </form>
-
-    <div class="note">
-      Una vez que registres tus 3 opciones, no podrás modificarlas. Solo el administrador puede editar o eliminar registros.
-    </div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://evxwafsndfvsgkwkkxpo.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHdhZnNuZGZ2c2drd2treHBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNDk2MzIsImV4cCI6MjA3NjcyNTYzMn0.NsHB8QJkrpbMOXJ2-tQgJ7wGDCgTsQst8RDRw8gGmE0";
     const ADMIN_PASSWORD = "admin123";
-
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const tableBody = document.querySelector("#giftTable tbody");
     const registerBtn = document.getElementById("registerBtn");
@@ -122,124 +106,73 @@
     let adminMode = false;
     let currentData = [];
 
-    function escapeHtml(str = "") {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function renderGift(name, link) {
+    function renderGift(name, links = []) {
       if (!name) return "";
-      return escapeHtml(name) + (link ? `<a href="${escapeHtml(link)}" target="_blank" class="link-icon" title="Ver enlace">📎</a>` : "");
+      const clips = links.filter(l => l).length;
+      const emojis = clips === 0 ? "" : " 📎".repeat(clips);
+      return name + emojis;
     }
 
     function renderTable(items = []) {
-      currentData = items;
-      tableBody.innerHTML = "";
-      if (items.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:20px;">Aún no hay registros.</td></tr>`;
-        return;
-      }
-      items.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(r.nombre)}</td>
-          <td>${renderGift(r.regalo1, r.link1)}</td>
-          <td>${renderGift(r.regalo2, r.link2)}</td>
-          <td>${renderGift(r.regalo3, r.link3)}</td>
-          <td class="center">
-            ${adminMode ? `
-              <div class="row-actions">
+      tableBody.innerHTML = items.length
+        ? items.map(r => `
+          <tr>
+            <td>${r.nombre}</td>
+            <td>${renderGift(r.regalo1, [r.link1a, r.link1b])}</td>
+            <td>${renderGift(r.regalo2, [r.link2a, r.link2b])}</td>
+            <td>${renderGift(r.regalo3, [r.link3a, r.link3b])}</td>
+            <td class="center">
+              ${adminMode ? `
                 <button class="edit" data-id="${r.id}">✏️</button>
-                <button class="del" data-id="${r.id}">🗑️</button>
-              </div>` : ""}
-          </td>`;
-        tableBody.appendChild(tr);
-      });
-
-      if (adminMode) {
-        document.querySelectorAll(".edit").forEach(b => b.onclick = e => adminEdit(parseInt(e.target.dataset.id)));
-        document.querySelectorAll(".del").forEach(b => b.onclick = e => adminDelete(parseInt(e.target.dataset.id)));
-      }
+                <button class="del" data-id="${r.id}">🗑️</button>` : ""}
+            </td>
+          </tr>`).join("")
+        : `<tr><td colspan="5" style="text-align:center;">Sin registros</td></tr>`;
     }
 
     async function loadGifts() {
-      const { data, error } = await supabase.from("regalos").select("*").order("id", { ascending: true });
-      if (!error) renderTable(data || []);
+      const { data } = await supabase.from("regalos").select("*").order("id");
+      renderTable(data || []);
     }
 
-    registerBtn.onclick = () => {
-      giftForm.style.display = giftForm.style.display === "block" ? "none" : "block";
-    };
-
-    adminBtn.onclick = () => {
-      const pass = prompt("Ingrese la clave de administrador:");
-      if (pass === ADMIN_PASSWORD) {
-        adminMode = true;
-        alert("Modo administrador activado ✅");
-        document.querySelector(".actions-header").style.display = "table-cell";
-        loadGifts();
-      } else alert("Clave incorrecta ❌");
-    };
-
-    cancelBtn.onclick = () => {
-      giftForm.reset();
-      giftForm.style.display = "none";
-    };
+    ["gift1", "gift2", "gift3"].forEach((g, i) => {
+      const select = document.getElementById(`${g}_links`);
+      const fields = document.getElementById(`${g}_links_fields`);
+      select.addEventListener("change", () => {
+        const n = parseInt(select.value);
+        fields.style.display = n > 0 ? "flex" : "none";
+        fields.querySelectorAll("input").forEach((inp, idx) => inp.style.display = idx < n ? "block" : "none");
+      });
+    });
 
     giftForm.onsubmit = async e => {
       e.preventDefault();
       const nombre = document.getElementById("name").value.trim();
+
       const regalo1 = document.getElementById("gift1").value.trim();
       const regalo2 = document.getElementById("gift2").value.trim();
       const regalo3 = document.getElementById("gift3").value.trim();
 
-      if (!nombre || !regalo1 || !regalo2 || !regalo3) return alert("Completa todos los campos.");
+      const link1a = document.getElementById("gift1_link1").value.trim();
+      const link1b = document.getElementById("gift1_link2").value.trim();
+      const link2a = document.getElementById("gift2_link1").value.trim();
+      const link2b = document.getElementById("gift2_link2").value.trim();
+      const link3a = document.getElementById("gift3_link1").value.trim();
+      const link3b = document.getElementById("gift3_link2").value.trim();
 
-      const { data: all } = await supabase.from("regalos").select("nombre");
-      const exists = (all || []).some(r => r.nombre.toLowerCase() === nombre.toLowerCase());
-      if (exists) return alert("Ya registraste tus regalos.");
-
-      const link1 = confirm("¿Regalo 1 tiene link?") ? prompt("Pega el link del Regalo 1:") : "";
-      const link2 = confirm("¿Regalo 2 tiene link?") ? prompt("Pega el link del Regalo 2:") : "";
-      const link3 = confirm("¿Regalo 3 tiene link?") ? prompt("Pega el link del Regalo 3:") : "";
-
-      const { error } = await supabase.from("regalos").insert([{ nombre, regalo1, link1, regalo2, link2, regalo3, link3 }]);
-      if (error) return alert("Error al guardar.");
+      const { error } = await supabase.from("regalos").insert([{ nombre, regalo1, link1a, link1b, regalo2, link2a, link2b, regalo3, link3a, link3b }]);
+      if (error) return alert("❌ Error al guardar");
       alert("🎉 Registro exitoso");
       giftForm.reset();
       giftForm.style.display = "none";
       loadGifts();
     };
 
-    async function adminEdit(id) {
-      const row = currentData.find(r => r.id === id);
-      if (!row) return;
-      const regalo1 = prompt("Regalo 1:", row.regalo1);
-      const link1 = prompt("Link 1:", row.link1 || "");
-      const regalo2 = prompt("Regalo 2:", row.regalo2);
-      const link2 = prompt("Link 2:", row.link2 || "");
-      const regalo3 = prompt("Regalo 3:", row.regalo3);
-      const link3 = prompt("Link 3:", row.link3 || "");
-      await supabase.from("regalos").update({ regalo1, link1, regalo2, link2, regalo3, link3 }).eq("id", id);
-      loadGifts();
-    }
+    registerBtn.onclick = () => giftForm.style.display = giftForm.style.display === "block" ? "none" : "block";
+    cancelBtn.onclick = () => { giftForm.reset(); giftForm.style.display = "none"; };
+    adminBtn.onclick = () => { if (prompt("Clave admin:") === ADMIN_PASSWORD) { adminMode = true; loadGifts(); } };
 
-    async function adminDelete(id) {
-      if (confirm("¿Eliminar este registro?")) {
-        await supabase.from("regalos").delete().eq("id", id);
-        loadGifts();
-      }
-    }
-
-    (async () => {
-      document.querySelector(".actions-header").style.display = "none";
-      await loadGifts();
-      supabase.channel("public:regalos").on("postgres_changes", { event: "*", schema: "public", table: "regalos" }, loadGifts).subscribe();
-    })();
+    loadGifts();
   </script>
 </body>
 </html>
