@@ -6,37 +6,145 @@
   <title>Amigo Secreto - Regalos</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: Inter, Arial, sans-serif; background: #f3f4f6; padding: 24px; color: #111827; }
-    h1 { text-align:center; color:#b91c1c; margin-bottom: 8px; }
-    .container { max-width: 960px; margin: 0 auto; }
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
-    th, td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
-    th { background:#b91c1c; color: white; font-weight:600; text-align:center; }
-    .btn { background:#b91c1c; color:white; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
-    .btn.secondary { background:#374151; }
-    .btn-row { display:flex; gap:12px; justify-content:center; margin-top:18px; }
-    form.card { display:none; background:#fff; padding:16px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.06); max-width:500px; margin:20px auto; }
-    input[type="text"], select { width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #d1d5db; font-size:14px; }
-    .link-fields { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
-    .center { text-align:center; }
+    body { 
+      font-family: Inter, Arial, sans-serif; 
+      background: #f3f4f6; 
+      padding: 16px; 
+      color: #111827; 
+      margin: 0;
+    }
+
+    h1 { 
+      text-align: center; 
+      color: #b91c1c; 
+      margin-bottom: 8px; 
+      font-size: 1.4rem;
+    }
+
+    .container { 
+      max-width: 960px; 
+      margin: 0 auto; 
+    }
+
+    /* Contenedor para scroll horizontal en móviles */
+    .table-wrapper {
+      overflow-x: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      min-width: 600px;
+    }
+
+    th, td { 
+      padding: 10px 12px; 
+      border-bottom: 1px solid #e5e7eb; 
+      text-align: left; 
+      font-size: 14px; 
+      word-break: break-word;
+    }
+
+    th { 
+      background: #b91c1c; 
+      color: white; 
+      font-weight: 600; 
+      text-align: center; 
+    }
+
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .btn { 
+      background: #b91c1c; 
+      color: white; 
+      border: none; 
+      padding: 10px 16px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 14px;
+    }
+
+    .btn.secondary { 
+      background: #374151; 
+    }
+
+    .btn-row { 
+      display: flex; 
+      flex-wrap: wrap;
+      gap: 12px; 
+      justify-content: center; 
+      margin-top: 18px; 
+    }
+
+    form.card { 
+      display: none; 
+      background: #fff; 
+      padding: 16px; 
+      border-radius: 10px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+      max-width: 500px; 
+      margin: 20px auto; 
+    }
+
+    input[type="text"], select { 
+      width: 100%; 
+      padding: 10px; 
+      margin-top: 8px; 
+      border-radius: 8px; 
+      border: 1px solid #d1d5db; 
+      font-size: 14px; 
+    }
+
+    .link-fields { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+      margin-top: 6px; 
+    }
+
+    .center { text-align: center; }
+
+    /* 📱 Ajustes para pantallas pequeñas */
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      h1 { font-size: 1.2rem; }
+      table { font-size: 13px; }
+      th, td { padding: 8px; }
+      .btn { flex: 1; padding: 8px 10px; font-size: 13px; }
+      form.card { margin: 12px; padding: 12px; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎁 Amigo Secreto — Lista de Regalos</h1>
 
-    <table id="giftTable">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Regalo 1</th>
-          <th>Regalo 2</th>
-          <th>Regalo 3</th>
-          <th class="center actions-header" style="width:160px">Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- 🔹 Scroll horizontal en móviles -->
+    <div class="table-wrapper">
+      <table id="giftTable">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Regalo 1</th>
+            <th>Regalo 2</th>
+            <th>Regalo 3</th>
+            <th class="center actions-header" style="width:160px">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
     <div class="btn-row">
       <button id="registerBtn" class="btn">➕ Registrar regalos</button>
@@ -104,22 +212,14 @@
     const giftForm = document.getElementById("giftForm");
     const cancelBtn = document.getElementById("cancelBtn");
     let adminMode = false;
-    let currentData = [];
 
-   function renderGift(name, links = []) {
-  if (!name) return "";
-  const validLinks = links.filter(l => l && l.trim() !== "");
-  
-  if (validLinks.length === 0) return name;
-
-  // Crea cada emoji 📎 como un link clicable
-  const linksHTML = validLinks
-    .map(l => `<a href="${l}" target="_blank" title="Ver regalo">📎</a>`)
-    .join(" ");
-
-  return `${name} ${linksHTML}`;
-}
-
+    function renderGift(name, links = []) {
+      if (!name) return "";
+      const validLinks = links.filter(l => l && l.trim() !== "");
+      if (validLinks.length === 0) return name;
+      const linksHTML = validLinks.map(l => `<a href="${l}" target="_blank" title="Ver regalo">📎</a>`).join(" ");
+      return `${name} ${linksHTML}`;
+    }
 
     function renderTable(items = []) {
       tableBody.innerHTML = items.length
@@ -143,7 +243,7 @@
       renderTable(data || []);
     }
 
-    ["gift1", "gift2", "gift3"].forEach((g, i) => {
+    ["gift1", "gift2", "gift3"].forEach(g => {
       const select = document.getElementById(`${g}_links`);
       const fields = document.getElementById(`${g}_links_fields`);
       select.addEventListener("change", () => {
@@ -156,11 +256,9 @@
     giftForm.onsubmit = async e => {
       e.preventDefault();
       const nombre = document.getElementById("name").value.trim();
-
       const regalo1 = document.getElementById("gift1").value.trim();
       const regalo2 = document.getElementById("gift2").value.trim();
       const regalo3 = document.getElementById("gift3").value.trim();
-
       const link1a = document.getElementById("gift1_link1").value.trim();
       const link1b = document.getElementById("gift1_link2").value.trim();
       const link2a = document.getElementById("gift2_link1").value.trim();
@@ -184,4 +282,3 @@
   </script>
 </body>
 </html>
-
